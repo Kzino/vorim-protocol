@@ -6,7 +6,7 @@ An open protocol for AI agent identity, permissions, and cryptographically signe
 
 As AI agents become autonomous participants in business processes, the need for verifiable identity, scoped permissions, and tamper-evident accountability has never been greater. VAIP defines the standards that make agent deployment safe and auditable.
 
-> **EU AI Act** (enforced Aug 2025) mandates traceability and audit trails for high-risk AI systems. VAIP makes your agents compliant out of the box.
+> **EU AI Act** (enforced Aug 2025) mandates traceability and audit trails for high-risk AI systems. The **US Executive Order on AI** (EO 14110) requires risk management, transparency, and accountability for AI systems used in critical infrastructure. States including **Colorado**, **Illinois**, **Texas**, and **California** have enacted AI laws covering automated decision-making, biometric data, and algorithmic transparency. VAIP makes your agents compliant out of the box.
 
 ## Repository Structure
 

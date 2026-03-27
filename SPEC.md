@@ -722,6 +722,8 @@ Implementations MAY conform to one or more levels:
 - **SPIFFE** (Secure Production Identity Framework for Everyone) — Workload identity standard. VAIP adds trust scoring and audit trails beyond identity attestation.
 - **X.509** (RFC 5280) — Certificate-based identity. VAIP uses Ed25519 directly rather than certificate chains for simplicity and agent-specific semantics.
 - **EU AI Act** — European regulation on AI systems. VAIP's audit and identity features support compliance with high-risk AI system requirements.
+- **US Executive Order on AI** (EO 14110) — Federal executive order on safe, secure, and trustworthy AI. VAIP's identity verification, scoped permissions, and tamper-evident audit trails directly support the order's requirements for risk management, transparency, and accountability in AI systems.
+- **US State AI Laws** — Colorado AI Act (SB 24-205), Illinois AI Video Interview Act, Texas AI Advisory Council Act (HB 2060), and California's proposed AI transparency legislation. VAIP's audit event logging, agent identity tracking, and permission scoping provide the technical controls these laws require for automated decision-making systems.
 - **NIST AI RMF** — AI Risk Management Framework. VAIP aligns with governance, transparency, and accountability principles.
 
 ---
