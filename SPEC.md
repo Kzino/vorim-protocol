@@ -1,7 +1,7 @@
 # Vorim Agent Identity Protocol (VAIP)
 
-**Version:** 1.0.0-draft
-**Status:** Draft
+**Version:** 2.0.0
+**Status:** Stable
 **Authors:** Vorim AI
 **Date:** March 2026
 
@@ -546,7 +546,9 @@ All endpoints are served under a versioned path prefix:
 |--------|------|------|-------------|
 | `POST` | `/audit/events` | API Key | Ingest audit events (batch) |
 | `GET` | `/audit/events` | JWT | Query events with filters |
-| `GET` | `/audit/export` | JWT | Export signed audit bundle |
+| `GET` | `/audit/stats` | JWT | Event statistics (configurable window) |
+| `GET` | `/audit/hourly` | JWT | Hourly event counts for charts |
+| `POST` | `/audit/export` | JWT | Export signed audit bundle |
 
 #### Trust (Public)
 
@@ -562,6 +564,13 @@ All endpoints are served under a versioned path prefix:
 | `POST` | `/api-keys` | JWT | Create API key |
 | `GET` | `/api-keys` | JWT | List API keys |
 | `DELETE` | `/api-keys/:id` | JWT | Revoke API key |
+
+#### Documentation
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `GET` | `/docs` | None | Interactive API documentation (Swagger UI) |
+| `GET` | `/docs/openapi.json` | None | OpenAPI 3.1 specification (JSON) |
 
 ### 7.3 Response Envelope
 
@@ -701,7 +710,7 @@ Implementations MAY conform to one or more levels:
 - All Level 4 requirements
 - Signed audit bundle export with SHA-256 manifest
 - Ed25519 event signatures
-- Multi-format export (JSON, CSV)
+- Multi-format export (JSON, CSV, PDF)
 - API key management with SHA-256 hashed storage
 
 ---

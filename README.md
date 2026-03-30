@@ -52,7 +52,7 @@ vorim-protocol/
 ### TypeScript
 
 ```bash
-npm install @vorim/sdk
+npm install @vorim/sdk@2
 ```
 
 ```typescript
@@ -94,7 +94,7 @@ Full SDK docs: [@vorim/sdk on npm](https://www.npmjs.com/package/@vorim/sdk)
 ### Python
 
 ```bash
-pip install vorim
+pip install vorim==2.0.0
 ```
 
 ```python
@@ -142,7 +142,7 @@ See [examples/integrations/](examples/integrations/) for complete working exampl
 
 ## Implementation Guide
 
-A managed implementation of VAIP is available at [vorim.ai](https://vorim.ai). To build your own conforming implementation, refer to:
+A managed implementation of VAIP is available at [vorim.ai](https://vorim.ai). Interactive API documentation is available at [vorim.ai/docs](https://vorim.ai/docs). To build your own conforming implementation, refer to:
 
 - [SPEC.md](SPEC.md) — Full protocol specification with wire formats and algorithms
 - [examples/register.ts](examples/register.ts) — Agent registration, signing, and audit event emission
