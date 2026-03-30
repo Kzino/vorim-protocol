@@ -137,8 +137,43 @@ VAIP SDKs ship with first-class integrations for popular AI agent frameworks. Ea
 | **OpenAI Function Calling** | `@vorim/sdk/integrations/openai` | `vorim[openai]` | [openai.ts](examples/integrations/openai.ts) |
 | **CrewAI** | `@vorim/sdk/integrations/crewai` | `vorim[crewai]` | [crewai.ts](examples/integrations/crewai.ts) |
 | **LlamaIndex** | `@vorim/sdk/integrations/llamaindex` | — | [llamaindex.ts](examples/integrations/llamaindex.ts) |
+| **Anthropic / Claude** | `@vorim/sdk/integrations/anthropic` | `vorim[anthropic]` | (no example file yet) |
 
 See [examples/integrations/](examples/integrations/) for complete working examples, including a [Python quick start](examples/integrations/python_quickstart.py).
+
+## MCP Server
+
+Vorim AI ships an MCP (Model Context Protocol) server that exposes all Vorim operations as tools for Claude, Cursor, VS Code, and any MCP-compatible client.
+
+```bash
+npm install -g @vorim/mcp-server
+```
+
+Configure in Claude Desktop (`~/Library/Application Support/Claude/claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "vorim": {
+      "command": "npx",
+      "args": ["@vorim/mcp-server"],
+      "env": { "VORIM_API_KEY": "agid_sk_live_..." }
+    }
+  }
+}
+```
+
+13 tools available: `vorim_ping`, `vorim_register_agent`, `vorim_get_agent`, `vorim_list_agents`, `vorim_update_agent`, `vorim_revoke_agent`, `vorim_check_permission`, `vorim_grant_permission`, `vorim_list_permissions`, `vorim_revoke_permission`, `vorim_emit_event`, `vorim_export_audit`, `vorim_verify_trust`.
+
+## Agent Discovery
+
+Vorim AI publishes a machine-readable Agent Card for automated discovery:
+
+```
+GET https://vorim.ai/.well-known/agent.json
+```
+
+This follows the A2A (Agent-to-Agent) discovery pattern, allowing other agents to programmatically discover Vorim's capabilities, endpoints, and authentication requirements.
 
 ## Implementation Guide
 
