@@ -94,7 +94,7 @@ Full SDK docs: [@vorim/sdk on npm](https://www.npmjs.com/package/@vorim/sdk)
 ### Python
 
 ```bash
-pip install vorim==2.0.0
+pip install vorim>=2.1
 ```
 
 ```python
