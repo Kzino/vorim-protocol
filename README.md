@@ -142,7 +142,7 @@ VAIP SDKs ship with first-class integrations for popular AI agent frameworks. Ea
 | **OpenAI Function Calling** | `@vorim/sdk/integrations/openai` | `vorim[openai]` | [openai.ts](examples/integrations/openai.ts) |
 | **CrewAI** | `@vorim/sdk/integrations/crewai` | `vorim[crewai]` | [crewai.ts](examples/integrations/crewai.ts) |
 | **LlamaIndex** | `@vorim/sdk/integrations/llamaindex` | — | [llamaindex.ts](examples/integrations/llamaindex.ts) |
-| **Anthropic / Claude** | `@vorim/sdk/integrations/anthropic` | `vorim[anthropic]` | (no example file yet) |
+| **Anthropic / Claude** | `@vorim/sdk/integrations/anthropic` | `vorim[anthropic]` | [anthropic.ts](examples/integrations/anthropic.ts) |
 
 See [examples/integrations/](examples/integrations/) for complete working examples, including a [Python quick start](examples/integrations/python_quickstart.py).
 
