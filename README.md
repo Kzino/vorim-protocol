@@ -14,17 +14,22 @@ As AI agents become autonomous participants in business processes, the need for 
 vorim-protocol/
 ├── SPEC.md              ← Core protocol specification
 ├── README.md            ← Overview, why this exists, links
-├── LICENSE              ← Apache 2.0
+├── LICENSE              ← BSL 1.1 (Business Source License)
 ├── CONTRIBUTING.md      ← How to propose changes
 ├── examples/
 │   ├── register.ts      ← Register an agent and emit audit events
 │   ├── verify.ts        ← Verify agent identity and check permissions
+│   ├── permissions.ts   ← Grant, check, list, and revoke permissions
+│   ├── audit-trail.ts   ← Emit events, batch emit, export signed bundles
+│   ├── multi-agent.ts   ← Multi-agent system with delegation tracking
+│   ├── quickstart.py    ← Python SDK full quickstart
 │   └── integrations/
-│       ├── langchain.ts          ← LangChain / LangGraph (tool wrapping, callbacks, agent factory)
-│       ├── openai.ts             ← OpenAI function calling (tool registry, agent loop)
-│       ├── crewai.ts             ← CrewAI (crew registration, delegation, audit)
-│       ├── llamaindex.ts         ← LlamaIndex (tool wrapping, agent factory)
-│       └── python_quickstart.py  ← Python SDK quick start + integrations
+│       ├── langchain.ts          ← LangChain / LangGraph
+│       ├── openai.ts             ← OpenAI function calling
+│       ├── anthropic.ts          ← Claude (Anthropic) tool use
+│       ├── crewai.ts             ← CrewAI (crew registration, delegation)
+│       ├── llamaindex.ts         ← LlamaIndex (tool wrapping)
+│       └── python_quickstart.py  ← Python integrations
 └── rfcs/
     └── 001-template.md  ← Template for proposing protocol changes
 ```
@@ -190,7 +195,7 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines 
 
 ## License
 
-Apache 2.0 — see [LICENSE](LICENSE) for details.
+Business Source License 1.1 (BSL 1.1) — see [LICENSE](LICENSE) for details.
 
 ---
 
