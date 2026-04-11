@@ -1,9 +1,9 @@
 # Vorim Agent Identity Protocol (VAIP)
 
-**Version:** 2.0.0
+**Version:** 3.0.0
 **Status:** Stable
 **Authors:** Vorim AI
-**Date:** March 2026
+**Date:** April 2026
 
 ---
 
@@ -715,7 +715,99 @@ Implementations MAY conform to one or more levels:
 
 ---
 
-## 10. References
+## 10. Credential Delegation (Extension)
+
+### 10.1 Overview
+
+When an agent needs to access a third-party service (e.g., Google Drive, GitHub, Salesforce) on behalf of a user, it requires OAuth credentials. Credential delegation defines how an agent receives scoped, time-limited credentials without exposing raw refresh tokens or long-lived secrets.
+
+This extension is complementary to draft-sweeney-wimse-credential-delegation-00, which defines the wire protocol for OAuth token delegation. VAIP's contribution is binding credential delegation to verified agent identities, permission scopes, and audit trails.
+
+### 10.2 Delegation Model
+
+A credential delegation binds an agent to a user's OAuth connection with attenuated scopes:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `delegation_id` | string | Yes | Unique delegation identifier |
+| `connection_id` | string | Yes | Reference to the user's OAuth connection |
+| `agent_id` | string | Yes | Agent receiving the delegation |
+| `scopes_delegated` | string[] | Yes | Must be a subset of the connection's granted scopes |
+| `max_requests_per_hr` | integer | No | Rate limit on token requests |
+| `valid_from` | timestamp | Yes | When the delegation becomes effective |
+| `valid_until` | timestamp | No | Expiration time (null = no expiry) |
+| `granted_by` | string | Yes | User who authorised the delegation |
+
+A conforming system MUST:
+- Verify the requesting agent's VAIP identity before issuing any credential
+- Check the agent's permission scope against the requested OAuth scope
+- Issue short-lived access tokens only; refresh tokens MUST remain in the delegation server's encrypted vault (AES-256-GCM)
+- Record every credential issuance as an audit event
+- Support immediate revocation that propagates across delegation chains
+
+### 10.3 Multi-Hop Delegation Chains
+
+In multi-agent systems, credentials may flow through delegation chains: User → Agent A → Agent B → Agent C. At each hop, credentials SHOULD be attenuated — narrowing the scope, reducing the time-to-live, and lowering the rate limit.
+
+Each delegation hop MUST:
+1. Verify the delegating agent has the `agent:delegate` permission
+2. Produce a signed delegation receipt (Ed25519 JWS) linking the delegator's `agent_id` to the delegate's `agent_id`
+3. Record the delegation as an audit event with `event_type: "credential_delegation"`
+4. Enforce that the delegated credential's scope is a strict subset of the delegator's scope
+
+### 10.4 Cascading Revocation
+
+Revoking any link in a delegation chain MUST cascade to all downstream delegates. Revocation MUST propagate synchronously (within 5 seconds). Revocation events MUST be recorded in the credential audit trail.
+
+### 10.5 Token Request Flow
+
+```
+1. Agent sends POST /credentials/token with agent_id and scope
+2. System verifies agent VAIP identity (active, not revoked)
+3. System finds active credential delegation for this agent
+4. System verifies requested scope is within delegated scopes
+5. System decrypts refresh token from encrypted vault
+6. System exchanges refresh token for short-lived access token
+7. System returns access token to agent (never the refresh token)
+8. System logs the token issuance to credential audit trail
+```
+
+---
+
+## 11. Ephemeral Agent Identity (Extension)
+
+### 11.1 Overview
+
+For short-lived agents that do not require persistent identity registration, VAIP supports ephemeral identity using W3C `did:key` format. Ephemeral agents bootstrap identity on instantiation without traditional pre-registration.
+
+### 11.2 did:key Format
+
+An ephemeral agent identity is derived from an Ed25519 public key:
+
+```
+did:key:z{base58btc(0xed01 + raw_32_byte_public_key)}
+```
+
+The `did:key` identifier is deterministic — the same public key always produces the same DID. No registry lookup is required for resolution.
+
+### 11.3 Ephemeral Agent Properties
+
+| Property | Value |
+|----------|-------|
+| `agent_id` format | `did:key:z6Mk...` (W3C standard) |
+| Maximum lifetime | 24 hours (RECOMMENDED default: 1 hour) |
+| Permission lifetime | Expires with agent TTL |
+| Status transitions | `active` → `expired` (automatic) |
+| Audit trail | Full — all actions attributable to the `did:key` |
+| Revocation | Automatic on TTL expiry, or manual |
+
+### 11.4 Conformance
+
+Ephemeral identity support is OPTIONAL. It does not replace persistent Ed25519 identity for production agents requiring long-term accountability. Implementations that support ephemeral identity MUST still enforce all VAIP permission checks and audit trail requirements.
+
+---
+
+## 12. References
 
 ### Normative References
 
@@ -732,6 +824,8 @@ Implementations MAY conform to one or more levels:
 - **X.509** (RFC 5280) — Certificate-based identity. VAIP uses Ed25519 directly rather than certificate chains for simplicity and agent-specific semantics.
 - **EU AI Act** — European regulation on AI systems. VAIP's audit and identity features support compliance with high-risk AI system requirements.
 - **US Executive Order on AI** (EO 14110) — Federal executive order on safe, secure, and trustworthy AI. VAIP's identity verification, scoped permissions, and tamper-evident audit trails directly support the order's requirements for risk management, transparency, and accountability in AI systems.
+- **Credential Delegation Protocol** (draft-sweeney-wimse-credential-delegation-00) — Defines secure OAuth token delegation across multi-agent systems. VAIP is complementary: VAIP provides the identity, permission, and audit layers; the Credential Delegation Protocol provides the credential flow mechanics.
+- **W3C did:key** — Self-certifying key-based decentralized identifiers. VAIP uses did:key for ephemeral agent identity (Section 11).
 - **US State AI Laws** — Colorado AI Act (SB 24-205), Illinois AI Video Interview Act, Texas AI Advisory Council Act (HB 2060), and California's proposed AI transparency legislation. VAIP's audit event logging, agent identity tracking, and permission scoping provide the technical controls these laws require for automated decision-making systems.
 - **NIST AI RMF** — AI Risk Management Framework. VAIP aligns with governance, transparency, and accountability principles.
 
