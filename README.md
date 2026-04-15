@@ -6,7 +6,7 @@ An open protocol for AI agent identity, permissions, and cryptographically signe
 
 As AI agents become autonomous participants in business processes, the need for verifiable identity, scoped permissions, and tamper-evident accountability has never been greater. VAIP defines the standards that make agent deployment safe and auditable.
 
-> **EU AI Act** (enforced Aug 2025) mandates traceability and audit trails for high-risk AI systems. The **US Executive Order on AI** (EO 14110) requires risk management, transparency, and accountability for AI systems used in critical infrastructure. States including **Colorado**, **Illinois**, **Texas**, and **California** have enacted AI laws covering automated decision-making, biometric data, and algorithmic transparency. VAIP makes your agents compliant out of the box.
+> **EU AI Act** (enforced Aug 2026) mandates traceability and audit trails for high-risk AI systems. **US Executive Order 14110** requires risk management, transparency, and accountability. **Colorado AI Act**, **Connecticut SB 1103**, **NYC Local Law 144**, **California SB 942**, and **Utah AI Policy Act** mandate audit trails, risk assessment, and transparency for AI systems. VAIP makes your agents compliant out of the box.
 
 ## Repository Structure
 
@@ -40,7 +40,9 @@ vorim-protocol/
 - **Permission Model** — 7 hierarchical scopes (`agent:read` through `agent:elevate`) with time-bounded grants and rate limiting
 - **Audit Trail** — Append-only event ledger with ULID ordering, content hashing, and exportable signed bundles
 - **Trust Scoring** — 5-factor algorithm (status, age, success rate, denial ratio, scope breadth) producing a 0-100 score
-- **Conformance Levels** — 5 tiers from basic identity to full cryptographic audit, enabling incremental adoption
+- **Credential Delegation** — Secure OAuth token proxy with AES-256-GCM encrypted vault, multi-hop delegation chains, scope attenuation, and cascading revocation
+- **Ephemeral Identity** — W3C did:key identifiers for short-lived agents with TTL-based auto-expiry
+- **Conformance Levels** — 7 tiers from basic identity to full cryptographic audit with credential delegation and ephemeral identity
 
 ## Conformance Levels
 
@@ -51,13 +53,15 @@ vorim-protocol/
 | 3 | Audited | Level 2 + append-only audit trail with content hashing |
 | 4 | Trusted | Level 3 + trust scoring and public verification |
 | 5 | Sealed | Level 4 + signed audit bundles with SHA-256 manifests |
+| 6 | Delegated | Level 5 + credential delegation with scope attenuation and cascading revocation |
+| 7 | Ephemeral | Level 5 + W3C did:key identifiers with TTL-based auto-expiry |
 
 ## SDKs
 
 ### TypeScript
 
 ```bash
-npm install @vorim/sdk@2
+npm install @vorim/sdk
 ```
 
 ```typescript
@@ -99,7 +103,7 @@ Full SDK docs: [@vorim/sdk on npm](https://www.npmjs.com/package/@vorim/sdk)
 ### Python
 
 ```bash
-pip install vorim>=2.1
+pip install vorim
 ```
 
 ```python
@@ -169,6 +173,44 @@ Configure in Claude Desktop (`~/Library/Application Support/Claude/claude_deskto
 ```
 
 13 tools available: `vorim_ping`, `vorim_register_agent`, `vorim_get_agent`, `vorim_list_agents`, `vorim_update_agent`, `vorim_revoke_agent`, `vorim_check_permission`, `vorim_grant_permission`, `vorim_list_permissions`, `vorim_revoke_permission`, `vorim_emit_event`, `vorim_export_audit`, `vorim_verify_trust`.
+
+## A2A Protocol Integration
+
+Vorim provides an identity and trust verification layer for [Google's A2A (Agent-to-Agent) Protocol](https://a2a-protocol.org/). Extends A2A Agent Cards with cryptographic identity and live trust scoring.
+
+```bash
+npm install @vorim/a2a
+```
+
+```typescript
+import { createVorimA2A } from '@vorim/a2a';
+
+const a2a = createVorimA2A({ apiKey: 'agid_sk_...' });
+
+// Extend your Agent Card with Vorim identity
+const card = await a2a.extendAgentCard(baseCard, agentId);
+// card.vorimIdentity = { agentId, trustScore, publicKeyFingerprint, scopes, verifyUrl }
+
+// Verify an incoming agent before interacting
+const result = await a2a.verifyAgent(incomingCard);
+if (result.trusted) {
+  // Trust score verified via public API, not self-reported
+}
+
+// Middleware for automatic verification
+const handler = a2a.middleware({ minTrustScore: 70 })(yourHandler);
+```
+
+Python:
+
+```python
+from vorim.a2a import VorimA2A
+
+a2a = VorimA2A(api_key="agid_sk_...")
+result = a2a.verify_agent(incoming_card, min_trust_score=60)
+```
+
+Full details: [@vorim/a2a on npm](https://www.npmjs.com/package/@vorim/a2a) | [Blog post](https://vorim.ai/blog/vorim-a2a-identity-trust-layer)
 
 ## Agent Discovery
 
